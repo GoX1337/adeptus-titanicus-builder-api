@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const app = express();
 const passport = require('./auth-fb');
 const User = require('./user');
+const Battlegroup = require('./battlegroup');
 let port = process.env.PORT || 8080;
 
 app.disable('x-powered-by');
@@ -53,19 +54,43 @@ app.get('/profile', cors(corsOptions), (req, res) => {
     }
 });
 
-app.options('/saveBattlegroup', cors(corsOptions));
-app.post('/saveBattlegroup', cors(corsOptions), (req, res) => {
-    console.log("/saveBattlegroup", req.cookies);
+app.options('/battlegroup', cors(corsOptions));
+app.post('/battlegroup', cors(corsOptions), (req, res) => {
+    console.log("/battlegroup", req.cookies);
     if(req.isAuthenticated()){
-        console.log("/saveBattlegroup", req.body);
+        console.log("/battlegroup", req.body);
 
         User.findOne({id: req.user.id}, (err, user) => {
-            res.status(200).send("Battlegroup saved");
+
+            var battlegroup = new Battlegroup({ 
+                name: req.body.name,
+                total: req.body.total,
+                userId: user._id,
+                list: req.body.list
+            });
+
+            battlegroup.save(function (err, battlegroup) {
+                if(err){
+                    res.status(500).send();
+                } else {
+                    res.status(200).send(battlegroup);
+                }
+            });
         });
 
     } else {
         res.status(401).send();
     }
+});
+
+app.get('/battlegroup', cors(corsOptions), (req, res) => {
+    Battlegroup.find((err, battlegroups) => {
+        if(err){
+            res.status(500).send();
+        } else {
+            res.status(200).send(battlegroups);
+        }
+    });
 });
 
 app.get('/fail', (req, res) => {
