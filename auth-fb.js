@@ -22,12 +22,10 @@ passport.use(new Strategy({
 );
 
 passport.serializeUser((user, cb) => {
-    console.log("serializeUser:", user.id);
     cb(null, user.id);
 });
 
 passport.deserializeUser((id, cb) => {
-    console.log("deserializeUser:", id);
     User.findOne({id: id}, (err, user) => {
         cb(null, user);
     });
