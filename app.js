@@ -9,7 +9,7 @@ const app = express();
 const passport = require('./auth-fb');
 const authRoutes = require('./auth-routes');
 const battlegroupRoutes = require('./battlegroup-routes');
-let port = process.env.PORT || 8080;
+const port = process.env.PORT || 8080;
 
 app.disable('x-powered-by');
 app.use(cookieParser());
