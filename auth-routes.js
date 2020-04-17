@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
-const passport = require('./auth-fb');
+const passportFacebook = require('./auth-fb');
+const passportGoogle = require('./auth-google');
 const router = express.Router();
 const User = require('./user');
 
@@ -37,9 +38,11 @@ router.get('/fail', (req, res) => {
     res.send("KO");
 });
 
-router.get('/auth/facebook', passport.authenticate('facebook'));
+router.get('/auth/facebook', passportFacebook.authenticate('facebook'));
+router.get("/auth/facebook/callback", passportFacebook.authenticate("facebook", { successRedirect: '/success', failureRedirect: '/fail' }));
 
-router.get("/auth/facebook/callback", passport.authenticate("facebook", { successRedirect: '/success', failureRedirect: '/fail' }));
+router.get('/auth/google', passportGoogle.authenticate('google', { scope: ['profile'] }));
+router.get("/auth/google/callback", passportGoogle.authenticate("google", { successRedirect: '/success', failureRedirect: '/fail' }));
 
 router.get('/logout', (req, res) => {
     req.logout();
